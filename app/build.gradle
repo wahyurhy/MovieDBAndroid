@@ -17,9 +17,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "POPULAR_URL", "\"https://api.themoviedb.org/3/movie/popular\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "POPULAR_URL", "\"https://api.themoviedb.org/3/movie/popular\""
         }
     }
     compileOptions {
@@ -42,4 +47,8 @@ dependencies {
 
     // gson
     implementation 'com.google.code.gson:gson:2.10'
+
+    // multidex
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
 }

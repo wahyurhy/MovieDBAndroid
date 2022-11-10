@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RestAPI</string>
+    <string name="loading_data">LOADING DATA...</string>
+    <string name="load_data_tag">loadData</string>
 </resources>
