@@ -12,11 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.OkHttpResponseAndParsedRequestListener;
 import com.androidnetworking.widget.ANImageView;
+import com.wahyurhy.restapi.data.response.detail.DetailMovieByIDResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,40 +43,20 @@ public class MainActivity extends AppCompatActivity {
                 .setTag(getString(R.string.load_data_tag))
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
+                .getAsOkHttpResponseAndObject(DetailMovieByIDResponse.class, new OkHttpResponseAndParsedRequestListener<DetailMovieByIDResponse>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String title = response.getString("original_title");
-                            String overview = response.getString("overview");
-                            mPoster.setImageUrl("https://image.tmdb.org/t/p/original" + response.getString("poster_path"));
-                            mTitle.setText(title);
-                            mOverview.setText(overview);
-                            Log.d("TAG", "onResponse: " + response.getString("overview"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onResponse(Response okHttpResponse, DetailMovieByIDResponse response) {
+                        mPoster.setImageUrl("https://image.tmdb.org/t/p/original" + response.getPosterPath());
+                        mTitle.setText(response.getTitle());
+                        mOverview.setText(response.getOverview());
                     }
 
                     @Override
-                    public void onError(ANError error) {
-                        if (error.getErrorCode() != 0) {
-                            // received error from server
-                            // error.getErrorCode() - the error code from server
-                            // error.getErrorBody() - the error body from server
-                            // error.getErrorDetail() - just an error detail
-                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
-                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                            // get parsed error object (If ApiError is your class)
-                            //ApiError apiError = error.getErrorAsObject(ApiError.class);
-                            mTitle.setText(error.getErrorDetail());
-                        } else {
-                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                        }
+                    public void onError(ANError anError) {
+
                     }
                 });
+
     }
 
     private void initView() {
